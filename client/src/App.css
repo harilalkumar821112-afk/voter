@@ -1,0 +1,190 @@
+/* ===== GENERAL ===== */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* remove flex from body (important fix) */
+main {
+  min-height: 100%;
+}
+
+footer {
+  margin-top: auto;
+}
+
+/* ================= ANIMATIONS ================= */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ===== HERO SECTION (SAFE) ===== */
+.hero {
+  background: linear-gradient(90deg, #0d6efd, #6610f2);
+  color: white;
+  padding: 60px;
+  text-align: center;
+  animation: fadeIn 1s ease-in-out;
+}
+
+.hero h1 {
+  font-size: 40px;
+  font-weight: bold;
+  animation: slideDown 1s ease-in-out;
+}
+
+.hero p {
+  font-size: 16px;
+}
+
+/* ===== CARDS (SAFE) ===== */
+.card {
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+}
+
+/* ===== REMOVE LOGIN & DASHBOARD OLD STYLES ===== */
+/* ❌ COMMENTED to avoid conflict with Tailwind */
+
+/*
+.login-container { }
+.login-box { }
+.login-input { }
+.login-btn { }
+.dashboard { }
+.dashboard-box { }
+.btn { }
+.vote { }
+.epic { }
+.logout { }
+*/
+
+/* ===== LIST (SAFE) ===== */
+.list-group-item {
+  font-size: 15px;
+  padding: 10px;
+  border-bottom: 1px dashed #ccc;
+  transition: 0.3s;
+}
+
+.list-group-item:hover {
+  background: #f0f6ff;
+  padding-left: 15px;
+  cursor: pointer;
+}
+
+/* ===== TEXT ===== */
+.home-text {
+  font-size: 16px;
+  line-height: 1.7;
+  color: #444;
+  margin-top: 20px;
+}
+
+.feature-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin-top: 30px;
+  color: #2c7a2c;
+}
+
+/* ===== FOOTER ===== */
+.footer {
+  background: #111;
+  color: white;
+  padding: 25px;
+  text-align: center;
+  animation: fadeIn 1s ease-in-out;
+}
+
+.footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer li {
+  margin-bottom: 5px;
+}
+.auth-container {
+  min-height: 100vh;   /* 🔥 IMPORTANT (full screen height) */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  padding: 20px; /* extra space */
+}
+
+.auth-box {
+  background: white;
+  padding: 40px;
+  border-radius: 15px;
+  width: 100%;
+  max-width: 350px;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+@media (max-width: 576px) {
+  .auth-box {
+    padding: 30px 20px;
+    margin: 10px;
+  }
+}
+
+.auth-input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+.auth-btn {
+  width: 100%;
+  padding: 12px;
+  background: #4a00e0;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  margin-top: 10px;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.auth-btn:hover {
+  background: #8e2de2;
+}
+.stat-card {
+  border-radius: 15px;
+  transition: 0.3s;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+}

@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const path = require("path");
 require("dotenv").config();
 
 const userRoutes = require("./routes/userRoutes");
@@ -9,7 +10,7 @@ const voteRoutes = require("./routes/voteRoutes");
 
 const app = express();
 
-// middleware - enable CORS for all origins
+// middleware
 app.use(cors({
   origin: "*",
   credentials: true,
@@ -26,7 +27,7 @@ const connectDB = async () => {
   if (isConnected) return;
   const mongoUri = process.env.MONGO_URI;
   if (!mongoUri) {
-    console.warn("⚠️  MONGO_URI not found in environment variables");
+    console.warn("⚠️  MONGO_URI not found");
     return;
   }
   try {
@@ -38,31 +39,39 @@ const connectDB = async () => {
     console.log("✅ MongoDB Atlas Connected");
   } catch (err) {
     console.error("❌ MongoDB connection failed:", err.message);
-    throw err;
+    isConnected = false;
   }
 };
 
 // Connect on startup
 connectDB();
 
-// routes
+// DB middleware for API routes
 app.use("/api", async (req, res, next) => {
-  await connectDB();
-  next();
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    res.status(500).json({ message: "Database connection failed", error: err.message });
+  }
 });
 
+// API routes
 app.use("/api", userRoutes);
 app.use("/api", candidateRoutes);
 app.use("/api", voteRoutes);
 
-// test route
-app.get("/", (req, res) => {
-  res.send("✅ Voting API Running");
-});
-
 // health check
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok", message: "Server is running", dbConnected: isConnected });
+});
+
+// ✅ Serve React frontend
+const clientBuildPath = path.join(__dirname, "../client/build");
+app.use(express.static(clientBuildPath));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(clientBuildPath, "index.html"));
 });
 
 // error handling middleware
@@ -71,9 +80,7 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: "Internal server error", error: err.message });
 });
 
-// server start
 const PORT = process.env.PORT || 5000;
-
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });

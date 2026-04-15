@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+require("dotenv").config();
 
 const userRoutes = require("./routes/userRoutes");
 const candidateRoutes = require("./routes/candidateRoutes");
@@ -17,17 +18,25 @@ app.use("/api", userRoutes);
 app.use("/api", candidateRoutes);
 app.use("/api", voteRoutes);
 
-// database
-mongoose.connect("mongodb://127.0.0.1:27017/votingDB")
-.then(()=>console.log("MongoDB Connected"))
-.catch(err=>console.log(err));
+// ✅ DATABASE CONNECT
+const mongoUri = process.env.MONGO_URI;
+if (!mongoUri) {
+  console.error("Missing MONGO_URI in .env file");
+  process.exit(1);
+}
+
+mongoose.connect("mongodb+srv://harilalkumar821112_db_user:<voting12345>@cluster0.smgciq5.mongodb.net/?appName=Cluster0/VotingSystemDB")
+.then(()=>console.log("MongoDB Atlas Connected"))
+.catch(err=>console.log("MongoDB connection failed:", err));
 
 // test route
 app.get("/",(req,res)=>{
-res.send("Voting API Running");
+  res.send("Voting API Running");
 });
 
 // server start
-app.listen(5000,()=>{
-console.log("Server running on port 5000");
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT,()=>{
+  console.log(`Server running on port ${PORT}`);
 });

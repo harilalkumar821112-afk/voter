@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Use relative path for API calls - works in both development and production
 const API_BASE_URL = process.env.REACT_APP_API_URL ||
-  (process.env.NODE_ENV === "development" ? "http://localhost:5000/api" : "https://voting-backend-2qos.onrender.com/api");
+  (process.env.NODE_ENV === "development" ? "http://localhost:5000/api" : "https://voting-backend-2qox.onrender.com/api");
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,

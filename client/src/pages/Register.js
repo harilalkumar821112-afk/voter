@@ -1,69 +1,122 @@
-import React,{useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import apiClient from "../services/api";
+import { Link } from "react-router-dom";
 
-function Register(){
+function Register() {
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+    voterId: ""
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-const [form,setForm] = useState({
-name:"",
-email:"",
-password:"",
-voterId:""
-});
+  useEffect(() => {
+    const user = localStorage.getItem("user");
+    if (user) window.location.href = "/";
+  }, []);
 
-useEffect(() => {
-  // If already logged in, redirect to home
-  const user = localStorage.getItem("user");
-  if (user) {
-    window.location.href = "/";
-  }
-}, []);
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+    setError("");
+  };
 
-const handleChange = (e)=>{
-setForm({...form,[e.target.name]:e.target.value});
-};
+  const registerUser = async () => {
+    if (!form.name || !form.email || !form.password || !form.voterId) {
+      setError("Please fill all fields");
+      return;
+    }
+    if (form.password.length < 6) {
+      setError("Password must be at least 6 characters");
+      return;
+    }
 
-const registerUser = async ()=>{
+    setLoading(true);
+    setError("");
 
-if(!form.name || !form.email || !form.password || !form.voterId){
-alert("Fill all fields");
-return;
-}
+    try {
+      const response = await apiClient.post("/register", form);
+      alert("Registration Successful! Your Voter ID: " + response.data.voterId);
+      window.location.href = "/login";
+    } catch (err) {
+      console.error("Registration error:", err);
+      setError(err.response?.data?.message || err.message || "Registration failed");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-try{
-const response = await apiClient.post("/register",form);
-alert("Registration Successful! Your Voter ID: " + response.data.voterId);
-window.location.href="/login";
-}catch(err){
-console.error("Registration error:", err);
-const errorMessage = err.response?.data?.message || err.message || "Registration failed";
-alert("Error: " + errorMessage);
-}
+  return (
+    <div className="auth-container">
+      <div className="auth-box">
+        <h2 style={{ marginBottom: "8px", color: "#333" }}>Create Account</h2>
+        <p style={{ color: "#888", fontSize: "14px", marginBottom: "20px" }}>
+          Register to vote online
+        </p>
 
-};
+        {error && (
+          <div style={{
+            background: "#ffe0e0",
+            color: "#c0392b",
+            padding: "10px",
+            borderRadius: "8px",
+            marginBottom: "12px",
+            fontSize: "14px"
+          }}>
+            {error}
+          </div>
+        )}
 
-return(
+        <input
+          className="auth-input"
+          name="name"
+          placeholder="Full Name"
+          value={form.name}
+          onChange={handleChange}
+        />
+        <input
+          className="auth-input"
+          name="email"
+          type="email"
+          placeholder="Email Address"
+          value={form.email}
+          onChange={handleChange}
+        />
+        <input
+          className="auth-input"
+          name="voterId"
+          placeholder="Voter ID"
+          value={form.voterId}
+          onChange={handleChange}
+        />
+        <input
+          className="auth-input"
+          name="password"
+          type="password"
+          placeholder="Password (min 6 chars)"
+          value={form.password}
+          onChange={handleChange}
+        />
 
-<div className="auth-container">
+        <button
+          className="auth-btn"
+          onClick={registerUser}
+          disabled={loading}
+          style={{ opacity: loading ? 0.7 : 1 }}
+        >
+          {loading ? "Registering..." : "Register"}
+        </button>
 
-<div className="auth-box">
-
-<h2>Register</h2>
-
-<input className="auth-input" name="name" placeholder="Name" value={form.name} onChange={handleChange}/>
-<input className="auth-input" name="email" placeholder="Email" value={form.email} onChange={handleChange}/>
-<input className="auth-input" name="voterId" placeholder="Voter ID" value={form.voterId} onChange={handleChange}/>
-<input className="auth-input" name="password" type="password" placeholder="Password" value={form.password} onChange={handleChange}/>
-
-<button className="auth-btn" onClick={registerUser}>
-Register
-</button>
-
-</div>
-
-</div>
-
-);
-
+        <p style={{ marginTop: "16px", fontSize: "14px", color: "#666" }}>
+          Already have an account?{" "}
+          <Link to="/login" style={{ color: "#4a00e0", fontWeight: "600" }}>
+            Login
+          </Link>
+        </p>
+      </div>
+    </div>
+  );
 }
 
 export default Register;

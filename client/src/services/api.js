@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // Use relative path for API calls - works in both development and production
-const API_BASE_URL = "https://voter-tawny.vercel.app/";
+const API_BASE_URL = "https://voter-tawny.vercel.app/api";
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,

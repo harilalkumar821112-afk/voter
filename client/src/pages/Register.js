@@ -38,6 +38,7 @@ function Register() {
     try {
       const response = await apiClient.post("/register", form);
       alert("Registration Successful! Your Voter ID: " + response.data.voterId);
+      localStorage.removeItem("user");
       window.location.href = "/login";
     } catch (err) {
       console.error("Registration error:", err);

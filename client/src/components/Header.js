@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import apiClient from "../services/api";
 
 function Header() {
 
@@ -18,7 +18,7 @@ const userId = user?._id || null;
 
 useEffect(() => {
   if (!userId) return;
-  axios.get(`http://localhost:5000/api/notifications/${userId}`)
+  apiClient.get(`/notifications/${userId}`)
     .then(res => {
       const notifications = res.data.notifications || [];
       setUnreadCount(notifications.filter(n => !n.read).length);

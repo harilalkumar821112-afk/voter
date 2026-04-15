@@ -1,5 +1,5 @@
 import React,{useEffect,useState} from "react";
-import axios from "axios";
+import apiClient from "../services/api";
 
 function ElectionStatistics(){
 
@@ -11,7 +11,7 @@ candidates:[]
 });
 
 useEffect(()=>{
-axios.get("http://localhost:5000/api/stats")
+apiClient.get("/stats")
 .then(res=>setStats(res.data))
 .catch(err=>console.log(err));
 },[]);

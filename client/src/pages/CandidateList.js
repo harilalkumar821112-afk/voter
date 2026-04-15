@@ -1,6 +1,6 @@
 import React,{useEffect,useState} from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import apiClient from "../services/api";
 
 function CandidateList(){
 
@@ -11,7 +11,7 @@ const user = JSON.parse(localStorage.getItem("user")); // ✅ get logged user
 
 useEffect(()=>{
 
-axios.get("http://localhost:5000/api/candidates")
+apiClient.get("/candidates")
 .then(res=>setCandidates(res.data));
 
 },[]);
@@ -26,7 +26,7 @@ if(!user){
 
 try{
 
-const res = await axios.post("http://localhost:5000/api/vote",{
+const res = await apiClient.post("/vote",{
 userId:user._id,   // ✅ real user id
 candidateId:id
 });

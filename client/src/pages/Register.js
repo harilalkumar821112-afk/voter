@@ -1,5 +1,5 @@
 import React,{useState, useEffect} from "react";
-import axios from "axios";
+import apiClient from "../services/api";
 
 function Register(){
 
@@ -30,7 +30,7 @@ return;
 }
 
 try{
-const response = await axios.post("http://localhost:5000/api/register",form);
+const response = await apiClient.post("/register",form);
 alert("Registration Successful! Your Voter ID: " + response.data.voterId);
 window.location.href="/login";
 }catch(err){

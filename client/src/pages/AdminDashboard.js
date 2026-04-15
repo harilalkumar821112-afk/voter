@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import apiClient from "../services/api";
 
 function AdminDashboard() {
   const [user, setUser] = useState(null);
@@ -27,7 +27,7 @@ function AdminDashboard() {
   const fetchUsers = async (currentUser) => {
     try {
       setLoading(true);
-      const res = await axios.get(`http://localhost:5000/api/admin/users?adminId=${currentUser._id}`);
+      const res = await apiClient.get(`/admin/users?adminId=${currentUser._id}`);
       setUsers(res.data.users);
       setError("");
     } catch (err) {
@@ -45,7 +45,7 @@ function AdminDashboard() {
     }
 
     try {
-      await axios.put(`http://localhost:5000/api/admin/user/${targetId}`, {
+      await apiClient.put(`/admin/user/${targetId}`, {
         adminId: user._id,
         voterId: value
       });

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import apiClient from "../services/api";
 
 function Profile() {
   const [user, setUser] = useState(null);
@@ -35,7 +35,7 @@ function Profile() {
     }
 
     try {
-      const res = await axios.put(`http://localhost:5000/api/profile/${user._id}`, {
+      const res = await apiClient.put(`/profile/${user._id}`, {
         name,
         profilePic
       });

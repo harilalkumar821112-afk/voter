@@ -31,7 +31,9 @@ alert(res.data.message);
 window.location.href="/dashboard";
 
 }catch(err){
-alert("Login failed");
+console.error("Login error:", err);
+const errorMessage = err.response?.data?.message || err.message || "Login failed";
+alert("Error: " + errorMessage);
 }
 
 };

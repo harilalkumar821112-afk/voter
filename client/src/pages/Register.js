@@ -34,8 +34,9 @@ const response = await apiClient.post("/register",form);
 alert("Registration Successful! Your Voter ID: " + response.data.voterId);
 window.location.href="/login";
 }catch(err){
-console.log(err);
-alert("Error: " + (err.response?.data?.message || "Registration failed"));
+console.error("Registration error:", err);
+const errorMessage = err.response?.data?.message || err.message || "Registration failed";
+alert("Error: " + errorMessage);
 }
 
 };

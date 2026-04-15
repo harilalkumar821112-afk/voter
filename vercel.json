@@ -1,26 +1,18 @@
 {
   "version": 2,
-  "buildCommand": "cd client && npm run build",
+  "buildCommand": "cd server && npm install && cd ../client && npm install && npm run build",
   "outputDirectory": "client/build",
   "env": {
     "MONGO_URI": "@mongo_uri"
   },
-  "functions": {
-    "server/**/*.js": {
-      "runtime": "nodejs18.x"
-    }
-  },
-  "rewrites": [
+  "routes": [
     {
-      "source": "/api/(.*)",
-      "destination": "/server/server.js"
-    }
-  ],
-  "redirects": [
+      "src": "/api/(.*)",
+      "dest": "/server/server.js"
+    },
     {
-      "source": "/",
-      "destination": "/index.html",
-      "permanent": false
+      "src": "/(.*)",
+      "dest": "/client/build/index.html"
     }
   ]
 }

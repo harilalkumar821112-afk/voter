@@ -21,19 +21,28 @@ if(existingUser){
 return res.status(400).json({message:"Email already registered"});
 }
 
-// 🔹 create user without voterId; admin assigns it later
+// 🔹 generate unique voterId
+let voterId;
+let isUnique = false;
+while(!isUnique){
+  voterId = "VOTER" + Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
+  const existingVoter = await User.findOne({voterId});
+  if(!existingVoter) isUnique = true;
+}
+
+// 🔹 create user with generated voterId
 const user = new User({
 name,
 email,
 password,
-voterId: "",
+voterId,
 isAdmin:false,
 hasVoted:false   // 🔥 important for voting system
 });
 
 await user.save();
 
-res.json({message:"User Registered Successfully"});
+res.json({message:"User Registered Successfully", voterId});
 
 }catch(err){
 

@@ -29,8 +29,8 @@ return;
 }
 
 try{
-await axios.post("http://localhost:5000/api/register",form);
-alert("Registration Successful");
+const response = await axios.post("http://localhost:5000/api/register",form);
+alert("Registration Successful! Your Voter ID: " + response.data.voterId);
 window.location.href="/login";
 }catch(err){
 console.log(err);

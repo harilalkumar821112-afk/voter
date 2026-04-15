@@ -1,7 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const path = require("path");
 require("dotenv").config();
 
 const userRoutes = require("./routes/userRoutes");
@@ -43,7 +42,6 @@ const connectDB = async () => {
   }
 };
 
-// Connect on startup
 connectDB();
 
 // DB middleware for API routes
@@ -66,12 +64,8 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "ok", message: "Server is running", dbConnected: isConnected });
 });
 
-// ✅ Serve React frontend
-const clientBuildPath = path.join(__dirname, "../client/build");
-app.use(express.static(clientBuildPath));
-
-app.get("*", (req, res) => {
-  res.sendFile(path.join(clientBuildPath, "index.html"));
+app.get("/", (req, res) => {
+  res.json({ message: "✅ Voting API Running" });
 });
 
 // error handling middleware
@@ -79,13 +73,5 @@ app.use((err, req, res, next) => {
   console.error("Error:", err);
   res.status(500).json({ message: "Internal server error", error: err.message });
 });
-
-const PORT = process.env.PORT || 5000;
-
-if (process.env.NODE_ENV !== "production" || process.env.VERCEL !== "1") {
-  app.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
-  });
-}
 
 module.exports = app;

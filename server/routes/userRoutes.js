@@ -8,10 +8,10 @@ router.post("/register", async (req,res)=>{
 
 try{
 
-const {name,email,password} = req.body;
+const {name,email,password,voterId} = req.body;
 
 // 🔹 check empty
-if(!name || !email || !password){    
+if(!name || !email || !password || !voterId){    
 return res.status(400).json({message:"All fields required"});
 }
 
@@ -21,16 +21,13 @@ if(existingUser){
 return res.status(400).json({message:"Email already registered"});
 }
 
-// 🔹 generate unique voterId
-let voterId;
-let isUnique = false;
-while(!isUnique){
-  voterId = "VOTER" + Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
-  const existingVoter = await User.findOne({voterId});
-  if(!existingVoter) isUnique = true;
+// 🔹 check duplicate voterId
+const existingVoter = await User.findOne({voterId});
+if(existingVoter){
+return res.status(400).json({message:"Voter ID already taken"});
 }
 
-// 🔹 create user with generated voterId
+// 🔹 create user with provided voterId
 const user = new User({
 name,
 email,

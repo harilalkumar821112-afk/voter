@@ -6,7 +6,8 @@ function Register(){
 const [form,setForm] = useState({
 name:"",
 email:"",
-password:""
+password:"",
+voterId:""
 });
 
 useEffect(() => {
@@ -23,7 +24,7 @@ setForm({...form,[e.target.name]:e.target.value});
 
 const registerUser = async ()=>{
 
-if(!form.name || !form.email || !form.password){
+if(!form.name || !form.email || !form.password || !form.voterId){
 alert("Fill all fields");
 return;
 }
@@ -49,6 +50,7 @@ return(
 
 <input className="auth-input" name="name" placeholder="Name" value={form.name} onChange={handleChange}/>
 <input className="auth-input" name="email" placeholder="Email" value={form.email} onChange={handleChange}/>
+<input className="auth-input" name="voterId" placeholder="Voter ID" value={form.voterId} onChange={handleChange}/>
 <input className="auth-input" name="password" type="password" placeholder="Password" value={form.password} onChange={handleChange}/>
 
 <button className="auth-btn" onClick={registerUser}>

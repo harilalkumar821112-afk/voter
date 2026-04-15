@@ -153,10 +153,11 @@ router.post("/admin/create", async (req, res) => {
       return res.status(400).json({ message: "Admin already exists" });
     }
 
+    const hashedPassword = await bcrypt.hash(password, 10);
     const user = new User({
       name,
       email,
-      password,
+      password: hashedPassword,
       isAdmin: true,
       voterId: "",
       hasVoted: false

@@ -3,13 +3,16 @@ import { useNavigate } from "react-router-dom";
 import apiClient from "../services/api";
 
 function Dashboard() {
-  const [stats, setStats] = useState(null);
+  const [candidateCount, setCandidateCount] = useState(0);
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
     if (!user) { navigate("/login"); return; }
-    apiClient.get("/stats").then(res => setStats(res.data)).catch(() => { });
+    // Only fetch candidate count
+    apiClient.get("/candidates")
+      .then(res => setCandidateCount(res.data.length))
+      .catch(() => { });
   }, []);
 
   if (!user) return null;
@@ -33,10 +36,11 @@ function Dashboard() {
           <div>
             <h2 className="fw-bold mb-1">Welcome, {user.name} 👋</h2>
             <p className="mb-0" style={{ opacity: 0.85 }}>
-              Voter ID: <strong>{user.voterId || "Not assigned"}</strong> &nbsp;|&nbsp;
-              Status: {user.hasVoted
-                ? <span>✅ Voted</span>
-                : <span>⏳ Not Voted Yet</span>}
+              Voter ID: <strong>{user.voterId || "Not assigned"}</strong>
+              &nbsp;|&nbsp;
+              {user.hasVoted
+                ? <span>✅ You have voted</span>
+                : <span>⏳ You haven't voted yet</span>}
             </p>
           </div>
           <button className="btn btn-light fw-bold" onClick={logout}>
@@ -45,35 +49,39 @@ function Dashboard() {
         </div>
       </div>
 
-      {/* Stats Row */}
-      {stats && (
-        <div className="row g-3 mb-4">
-          <div className="col-md-4">
-            <div className="card border-0 shadow-sm text-center p-3">
-              <div style={{ fontSize: "36px" }}>👥</div>
-              <h3 className="fw-bold text-primary">{stats.totalVoters}</h3>
-              <p className="text-muted mb-0">Total Voters</p>
-            </div>
-          </div>
-          <div className="col-md-4">
-            <div className="card border-0 shadow-sm text-center p-3">
-              <div style={{ fontSize: "36px" }}>🗳️</div>
-              <h3 className="fw-bold text-success">{stats.totalVotes}</h3>
-              <p className="text-muted mb-0">Votes Cast</p>
-            </div>
-          </div>
-          <div className="col-md-4">
-            <div className="card border-0 shadow-sm text-center p-3">
-              <div style={{ fontSize: "36px" }}>🏛️</div>
-              <h3 className="fw-bold text-warning">{stats.totalCandidates}</h3>
-              <p className="text-muted mb-0">Candidates</p>
-            </div>
+      {/* Stat — only candidates count */}
+      <div className="row g-3 mb-4">
+        <div className="col-md-4">
+          <div className="card border-0 shadow-sm text-center p-4" style={{ borderLeft: "4px solid #667eea" }}>
+            <div style={{ fontSize: "36px" }}>🏛️</div>
+            <h3 className="fw-bold text-primary mt-2">{candidateCount}</h3>
+            <p className="text-muted mb-0">Candidates in Election</p>
           </div>
         </div>
-      )}
+        <div className="col-md-4">
+          <div className="card border-0 shadow-sm text-center p-4" style={{ borderLeft: "4px solid #2ecc71" }}>
+            <div style={{ fontSize: "36px" }}>🗳️</div>
+            <h3 className="fw-bold text-success mt-2">
+              {user.hasVoted ? "Done ✅" : "Pending"}
+            </h3>
+            <p className="text-muted mb-0">Your Vote Status</p>
+          </div>
+        </div>
+        <div className="col-md-4">
+          <div className="card border-0 shadow-sm text-center p-4" style={{ borderLeft: "4px solid #f39c12" }}>
+            <div style={{ fontSize: "36px" }}>🪪</div>
+            <h3 className="fw-bold text-warning mt-2" style={{ fontSize: "18px" }}>
+              {user.voterId || "Not Assigned"}
+            </h3>
+            <p className="text-muted mb-0">Your Voter ID</p>
+          </div>
+        </div>
+      </div>
 
       {/* Action Cards */}
       <div className="row g-4">
+
+        {/* Vote Now */}
         <div className="col-md-4">
           <div className="card border-0 shadow-sm h-100" style={{ borderRadius: "16px" }}>
             <div className="card-body text-center p-4">
@@ -92,57 +100,7 @@ function Dashboard() {
           </div>
         </div>
 
-        <div className="col-md-4">
-          <div className="card border-0 shadow-sm h-100" style={{ borderRadius: "16px" }}>
-            <div className="card-body text-center p-4">
-              <div style={{ fontSize: "48px" }}>📊</div>
-              <h5 className="fw-bold mt-2">Election Results</h5>
-              <p className="text-muted">View live election results and statistics.</p>
-              <button
-                className="btn btn-success w-100"
-                style={{ borderRadius: "25px" }}
-                onClick={() => navigate("/result")}
-              >
-                View Results
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div className="col-md-4">
-          <div className="card border-0 shadow-sm h-100" style={{ borderRadius: "16px" }}>
-            <div className="card-body text-center p-4">
-              <div style={{ fontSize: "48px" }}>🔔</div>
-              <h5 className="fw-bold mt-2">Notifications</h5>
-              <p className="text-muted">View your vote receipt and notifications.</p>
-              <button
-                className="btn btn-warning w-100"
-                style={{ borderRadius: "25px" }}
-                onClick={() => navigate("/notifications")}
-              >
-                View Notifications
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div className="col-md-4">
-          <div className="card border-0 shadow-sm h-100" style={{ borderRadius: "16px" }}>
-            <div className="card-body text-center p-4">
-              <div style={{ fontSize: "48px" }}>👤</div>
-              <h5 className="fw-bold mt-2">My Profile</h5>
-              <p className="text-muted">View and update your profile information.</p>
-              <button
-                className="btn btn-info w-100 text-white"
-                style={{ borderRadius: "25px" }}
-                onClick={() => navigate("/profile")}
-              >
-                View Profile
-              </button>
-            </div>
-          </div>
-        </div>
-
+        {/* Download EPIC */}
         <div className="col-md-4">
           <div className="card border-0 shadow-sm h-100" style={{ borderRadius: "16px" }}>
             <div className="card-body text-center p-4">
@@ -160,24 +118,60 @@ function Dashboard() {
           </div>
         </div>
 
-        {user.isAdmin && (
-          <div className="col-md-4">
-            <div className="card border-0 shadow-sm h-100" style={{ borderRadius: "16px", border: "2px solid #dc3545" }}>
-              <div className="card-body text-center p-4">
-                <div style={{ fontSize: "48px" }}>⚙️</div>
-                <h5 className="fw-bold mt-2">Admin Panel</h5>
-                <p className="text-muted">Manage users, candidates and elections.</p>
-                <button
-                  className="btn btn-danger w-100"
-                  style={{ borderRadius: "25px" }}
-                  onClick={() => navigate("/admin")}
-                >
-                  Admin Dashboard
-                </button>
-              </div>
+        {/* Notifications */}
+        <div className="col-md-4">
+          <div className="card border-0 shadow-sm h-100" style={{ borderRadius: "16px" }}>
+            <div className="card-body text-center p-4">
+              <div style={{ fontSize: "48px" }}>🔔</div>
+              <h5 className="fw-bold mt-2">Notifications</h5>
+              <p className="text-muted">View your vote receipt and updates.</p>
+              <button
+                className="btn btn-warning w-100 text-white"
+                style={{ borderRadius: "25px" }}
+                onClick={() => navigate("/notifications")}
+              >
+                View
+              </button>
             </div>
           </div>
-        )}
+        </div>
+
+        {/* Profile */}
+        <div className="col-md-4">
+          <div className="card border-0 shadow-sm h-100" style={{ borderRadius: "16px" }}>
+            <div className="card-body text-center p-4">
+              <div style={{ fontSize: "48px" }}>👤</div>
+              <h5 className="fw-bold mt-2">My Profile</h5>
+              <p className="text-muted">View and update your profile.</p>
+              <button
+                className="btn btn-info w-100 text-white"
+                style={{ borderRadius: "25px" }}
+                onClick={() => navigate("/profile")}
+              >
+                View Profile
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Election Results */}
+        <div className="col-md-4">
+          <div className="card border-0 shadow-sm h-100" style={{ borderRadius: "16px" }}>
+            <div className="card-body text-center p-4">
+              <div style={{ fontSize: "48px" }}>📊</div>
+              <h5 className="fw-bold mt-2">Election Results</h5>
+              <p className="text-muted">View live election results.</p>
+              <button
+                className="btn btn-success w-100"
+                style={{ borderRadius: "25px" }}
+                onClick={() => navigate("/result")}
+              >
+                View Results
+              </button>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   );

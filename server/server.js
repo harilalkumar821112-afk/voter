@@ -19,32 +19,50 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// ✅ DATABASE CONNECT — cached for serverless
+let isConnected = false;
+
+const connectDB = async () => {
+  if (isConnected) return;
+  const mongoUri = process.env.MONGO_URI;
+  if (!mongoUri) {
+    console.warn("⚠️  MONGO_URI not found in environment variables");
+    return;
+  }
+  try {
+    await mongoose.connect(mongoUri, {
+      serverSelectionTimeoutMS: 10000,
+      socketTimeoutMS: 45000,
+    });
+    isConnected = true;
+    console.log("✅ MongoDB Atlas Connected");
+  } catch (err) {
+    console.error("❌ MongoDB connection failed:", err.message);
+    throw err;
+  }
+};
+
+// Connect on startup
+connectDB();
+
 // routes
+app.use("/api", async (req, res, next) => {
+  await connectDB();
+  next();
+});
+
 app.use("/api", userRoutes);
 app.use("/api", candidateRoutes);
 app.use("/api", voteRoutes);
 
-// ✅ DATABASE CONNECT
-const mongoUri = process.env.MONGO_URI;
-if (!mongoUri) {
-  console.warn("⚠️  MONGO_URI not found in environment variables");
-} else {
-  mongoose.connect(mongoUri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  })
-  .then(()=>console.log("✅ MongoDB Atlas Connected"))
-  .catch(err=>console.error("❌ MongoDB connection failed:", err.message));
-}
-
 // test route
-app.get("/",(req,res)=>{
+app.get("/", (req, res) => {
   res.send("✅ Voting API Running");
 });
 
 // health check
 app.get("/api/health", (req, res) => {
-  res.json({ status: "ok", message: "Server is running" });
+  res.json({ status: "ok", message: "Server is running", dbConnected: isConnected });
 });
 
 // error handling middleware
@@ -56,6 +74,8 @@ app.use((err, req, res, next) => {
 // server start
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT,()=>{
+app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
+
+module.exports = app;

@@ -25,7 +25,7 @@ if (!mongoUri) {
   process.exit(1);
 }
 
-mongoose.connect("mongodb+srv://harilalkumar821112_db_user:<voting12345>@cluster0.smgciq5.mongodb.net/?appName=Cluster0/VotingSystemDB")
+mongoose.connect(mongoUri)
 .then(()=>console.log("MongoDB Atlas Connected"))
 .catch(err=>console.log("MongoDB connection failed:", err));
 

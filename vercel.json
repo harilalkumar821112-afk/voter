@@ -2,9 +2,6 @@
   "version": 2,
   "buildCommand": "cd server && npm install && cd ../client && npm install && npm run build",
   "outputDirectory": "client/build",
-  "env": {
-    "MONGO_URI": "@mongo_uri"
-  },
   "routes": [
     {
       "src": "/api/(.*)",

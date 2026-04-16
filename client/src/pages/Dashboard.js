@@ -13,7 +13,7 @@ function Dashboard() {
     apiClient.get("/candidates")
       .then(res => setCandidateCount(res.data.length))
       .catch(() => { });
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!user) return null;
 

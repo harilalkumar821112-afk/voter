@@ -14,7 +14,7 @@ function AdminDashboard() {
   const [users, setUsers] = useState([]);
   const [candidates, setCandidates] = useState([]);
   const [votes, setVotes] = useState([]);
-  const [stats, setStats] = useState(null);
+  const [stats, setStats] = useState(null); // eslint-disable-line no-unused-vars
   const [newCandidate, setNewCandidate] = useState({ name: "", party: "" });
   const [loading, setLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(true);

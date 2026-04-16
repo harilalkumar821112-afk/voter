@@ -17,7 +17,7 @@ function CandidateList() {
       return;
     }
     fetchCandidates();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchCandidates = async () => {
     try {

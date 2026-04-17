@@ -11,8 +11,12 @@ function Login() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (localStorage.getItem("user")) window.location.href = "/dashboard";
-    if (localStorage.getItem("admin")) window.location.href = "/admin";
+    try {
+      if (localStorage.getItem("user")) window.location.replace("/dashboard");
+      if (localStorage.getItem("admin")) window.location.replace("/admin");
+    } catch (e) {
+      localStorage.clear();
+    }
   }, []);
 
   const handleLogin = async () => {

@@ -21,11 +21,22 @@ function AdminDashboard() {
 
   useEffect(() => {
     const stored = localStorage.getItem("admin");
-    if (!stored) { window.location.href = "/admin-login"; return; }
-    const a = JSON.parse(stored);
-    if (!a.isAdmin) { window.location.href = "/admin-login"; return; }
-    setAdmin(a);
-    fetchAll(a);
+    if (!stored) {
+      window.location.replace("/admin-login");
+      return;
+    }
+    try {
+      const a = JSON.parse(stored);
+      if (!a || !a.isAdmin) {
+        window.location.replace("/admin-login");
+        return;
+      }
+      setAdmin(a);
+      fetchAll(a);
+    } catch (e) {
+      localStorage.removeItem("admin");
+      window.location.replace("/admin-login");
+    }
   }, []);
 
   const fetchAll = async (a) => {
@@ -78,7 +89,14 @@ function AdminDashboard() {
     window.location.href = "/admin-login";
   };
 
-  if (!admin) return null;
+  if (!admin) return (
+    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", background: "#f0f2f5" }}>
+      <div style={{ textAlign: "center" }}>
+        <div className="spinner-border text-primary" />
+        <p style={{ marginTop: "12px", color: "#666" }}>Redirecting...</p>
+      </div>
+    </div>
+  );
 
   const styles = {
     wrapper: {

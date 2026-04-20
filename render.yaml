@@ -24,4 +24,4 @@ services:
         destination: /index.html
     envVars:
       - key: REACT_APP_API_URL
-        sync: false
+        value: https://voting-backend-2qox.onrender.com/api

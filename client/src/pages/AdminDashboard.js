@@ -21,22 +21,19 @@ function AdminDashboard() {
 
   useEffect(() => {
     const stored = localStorage.getItem("admin");
-    if (!stored) {
-      window.location.replace("/admin-login");
-      return;
+    if (!stored) { 
+      console.log("No admin in localStorage, redirecting to login");
+      setTimeout(() => { window.location.href = "/admin-login"; }, 100);
+      return; 
     }
-    try {
-      const a = JSON.parse(stored);
-      if (!a || !a.isAdmin) {
-        window.location.replace("/admin-login");
-        return;
-      }
-      setAdmin(a);
-      fetchAll(a);
-    } catch (e) {
-      localStorage.removeItem("admin");
-      window.location.replace("/admin-login");
+    const a = JSON.parse(stored);
+    if (!a.isAdmin) { 
+      console.log("User is not admin, redirecting to login");
+      setTimeout(() => { window.location.href = "/admin-login"; }, 100);
+      return; 
     }
+    setAdmin(a);
+    fetchAll(a);
   }, []);
 
   const fetchAll = async (a) => {
@@ -90,10 +87,18 @@ function AdminDashboard() {
   };
 
   if (!admin) return (
-    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", background: "#f0f2f5" }}>
-      <div style={{ textAlign: "center" }}>
-        <div className="spinner-border text-primary" />
-        <p style={{ marginTop: "12px", color: "#666" }}>Redirecting...</p>
+    <div style={{
+      minHeight: "100vh",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      background: "linear-gradient(135deg, #1a1a2e, #16213e, #0f3460)",
+      fontFamily: "'Segoe UI', sans-serif"
+    }}>
+      <div style={{ textAlign: "center", color: "white" }}>
+        <div style={{ fontSize: "40px", marginBottom: "20px" }}>🔐</div>
+        <h2>Redirecting to Admin Login...</h2>
+        <p style={{ color: "rgba(255,255,255,0.7)", marginTop: "10px" }}>Please wait...</p>
       </div>
     </div>
   );

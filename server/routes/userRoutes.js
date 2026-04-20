@@ -85,91 +85,11 @@ router.post("/login", async (req, res) => {
 
 });
 
-// ✅ ADMIN: LIST USERS
-router.get("/admin/users", async (req, res) => {
-  try {
-    const adminId = req.query.adminId;
-    if (!adminId) return res.status(401).json({ message: "Admin access required" });
 
-    const adminUser = await User.findById(adminId);
-    if (!adminUser || !adminUser.isAdmin) {
-      return res.status(403).json({ message: "Admin access required" });
-    }
 
-    const users = await User.find().select("-password");
-    res.json({ users });
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: "Error fetching users" });
-  }
-});
 
-// ✅ ADMIN: ASSIGN VOTER ID
-router.put("/admin/user/:id", async (req, res) => {
-  try {
-    const adminId = req.body.adminId;
-    const { id } = req.params;
-    const { voterId, isVerified } = req.body;
 
-    if (!adminId) return res.status(401).json({ message: "Admin access required" });
-    const adminUser = await User.findById(adminId);
-    if (!adminUser || !adminUser.isAdmin) {
-      return res.status(403).json({ message: "Admin access required" });
-    }
 
-    const user = await User.findById(id);
-    if (!user) return res.status(404).json({ message: "User not found" });
-
-    if (voterId) {
-      const existing = await User.findOne({ voterId, _id: { $ne: id } });
-      if (existing) return res.status(400).json({ message: "Voter ID already taken" });
-      user.voterId = voterId;
-    }
-    if (isVerified !== undefined) {
-      user.isVerified = isVerified;
-    }
-
-    await user.save();
-    const updated = user.toObject();
-    delete updated.password;
-    res.json({ message: "User updated successfully", user: updated });
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: "Error updating user" });
-  }
-});
-
-// ✅ CREATE ADMIN (first admin only)
-router.post("/admin/create", async (req, res) => {
-  try {
-    const { name, email, password, adminSecret } = req.body;
-    const SECRET = "admin-secret-123";
-    if (adminSecret !== SECRET) {
-      return res.status(403).json({ message: "Invalid admin secret" });
-    }
-
-    const existingAdmin = await User.findOne({ isAdmin: true });
-    if (existingAdmin) {
-      return res.status(400).json({ message: "Admin already exists" });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({
-      name,
-      email,
-      password: hashedPassword,
-      isAdmin: true,
-      voterId: "",
-      hasVoted: false
-    });
-
-    await user.save();
-    res.json({ message: "Admin user created" });
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: "Error creating admin" });
-  }
-});
 
 // ✅ UPDATE PROFILE
 router.put("/profile/:id", async (req, res) => {

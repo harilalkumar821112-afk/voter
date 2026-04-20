@@ -123,11 +123,6 @@ Election Management
 {/* ✅ USER NAME + LOGOUT */}
 {user && (
 <>
-{user.isAdmin && (
-<li className="nav-item">
-<Link className="nav-link" to="/admin">Admin</Link>
-</li>
-)}
 <li className="nav-item">
 <Link className="nav-link" to="/notifications">
 🔔 Notifications{unreadCount > 0 ? ` (${unreadCount})` : ""}

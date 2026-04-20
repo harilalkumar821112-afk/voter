@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from "react-router-dom";
 import "./App.css";
 
 import Header from "./components/Header";
@@ -10,8 +10,6 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Profile from "./pages/Profile";
 import Notifications from "./pages/Notifications";
-import AdminDashboard from "./pages/AdminDashboard";
-import AdminLogin from "./pages/AdminLogin";
 import CandidateList from "./pages/CandidateList";
 import ElectionResult from "./pages/ElectionResult";
 import DownloadEpic from "./pages/DownloadEpic";
@@ -23,11 +21,10 @@ import ElectionStatistics from "./pages/ElectionStatistics";
 
 function Layout() {
     const location = useLocation();
-    const isAdminPage = location.pathname === "/admin" || location.pathname === "/admin-login";
 
     return (
         <>
-            {!isAdminPage && <Header />}
+            <Header />
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
@@ -43,11 +40,10 @@ function Layout() {
                 <Route path="/download" element={<DownloadEpic />} />
                 <Route path="/search" element={<SearchVoter />} />
                 <Route path="/complaint" element={<Complaint />} />
-                {/* Admin Routes - No Header/Footer */}
-                <Route path="/admin-login" element={<AdminLogin />} />
-                <Route path="/admin" element={<AdminDashboard />} />
+                {/* Catch all undefined routes and redirect to home */}
+                <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
-            {!isAdminPage && <Footer />}
+            <Footer />
         </>
     );
 }

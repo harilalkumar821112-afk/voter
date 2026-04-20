@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const helmet = require("helmet");
-const rateLimit = require("express-ratelimit");
+const rateLimit = require("express-rate-limit");
 require("dotenv").config();
 
 const authRoutes = require("./routes/authRoutes");
@@ -34,6 +34,12 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("uploads"));
+
+// 📝 Request logging middleware
+app.use((req, res, next) => {
+  console.log(`📨 ${req.method} ${req.path}`);
+  next();
+});
 
 // ✅ DATABASE CONNECT — cached for serverless
 let isConnected = false;
@@ -71,6 +77,11 @@ app.use("/api", async (req, res, next) => {
 });
 
 // ✅ ADVANCED API ROUTES
+// Test route
+app.get("/api/test", (req, res) => {
+  res.json({ message: "Test route working" });
+});
+
 app.use("/api/auth", authRoutes);
 app.use("/api/elections", electionRoutes);
 app.use("/api/votes", advancedVoteRoutes);

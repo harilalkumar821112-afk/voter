@@ -7,6 +7,7 @@ function Register() {
     name: "",
     email: "",
     password: "",
+    confirmPassword: "",
     voterId: ""
   });
   const [loading, setLoading] = useState(false);
@@ -23,7 +24,7 @@ function Register() {
   };
 
   const registerUser = async () => {
-    if (!form.name || !form.email || !form.password || !form.voterId) {
+    if (!form.name || !form.email || !form.password || !form.confirmPassword || !form.voterId) {
       setError("Please fill all fields");
       return;
     }
@@ -31,12 +32,16 @@ function Register() {
       setError("Password must be at least 6 characters");
       return;
     }
+    if (form.password !== form.confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
 
     setLoading(true);
     setError("");
 
     try {
-      const response = await apiClient.post("/register", form);
+      const response = await apiClient.post("/auth/register", form);
       alert("Registration Successful! Your Voter ID: " + response.data.voterId);
       localStorage.removeItem("user");
       window.location.href = "/login";
@@ -97,6 +102,14 @@ function Register() {
           type="password"
           placeholder="Password (min 6 chars)"
           value={form.password}
+          onChange={handleChange}
+        />
+        <input
+          className="auth-input"
+          name="confirmPassword"
+          type="password"
+          placeholder="Confirm Password"
+          value={form.confirmPassword}
           onChange={handleChange}
         />
 

@@ -17,7 +17,7 @@ function Login() {
     if (!email || !password) { setError("Please fill all fields"); return; }
     setLoading(true); setError("");
     try {
-      const res = await apiClient.post("/login", { email, password });
+      const res = await apiClient.post("/auth/login", { email, password });
       const user = res.data.user;
       localStorage.setItem("user", JSON.stringify(user));
       window.location.href = "/dashboard";
